@@ -1,41 +1,26 @@
-name: auth-workflow.yml
+name: Run Jest Tests
 
 on:
   push:
-    branches:
-      - 'main'
-    paths:
-      - '**.js'
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-
-    services:
-      mongo:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
+    runs-on: windows-latest   # or ubuntu-latest for Linux runners
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Use Node.js 24
-        uses: actions/setup-node@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20  # or 18, depending on your project
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Start app
-        run: npm start &
+        run: npm ci
 
       - name: Run tests
         run: npm test
